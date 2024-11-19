@@ -34,3 +34,5 @@ jobs:
           runtime: python312
           entry_point: pipeline
           source_dir: ./pipeline
+          build_environment_variables: |-
+            GOOGLE_FUNCTION_SOURCE=src/main.py
