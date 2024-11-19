@@ -1,0 +1,16 @@
+services:
+  pipeline:
+    build:
+      context: pipeline
+      dockerfile: Dockerfile
+    container_name: pipeline
+    volumes:
+      - ./pipeline/.:/workdir
+    networks:
+      - pipeline-network
+    ports:
+      - "8080:8080"
+
+networks:
+  pipeline-network:
+    driver: bridge
