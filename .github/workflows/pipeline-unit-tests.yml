@@ -10,7 +10,7 @@ on:
       - 'ft/**'
 
 jobs:
-  test:
+  pipeline-unit-tests:
     runs-on: ubuntu-latest
 
     steps:
