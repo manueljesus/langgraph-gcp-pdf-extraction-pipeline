@@ -10,6 +10,8 @@ services:
       - pipeline-network
     ports:
       - "8080:8080"
+    env_file:
+      - ./pipeline/.env
 
 networks:
   pipeline-network:
