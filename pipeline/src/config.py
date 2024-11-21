@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     """
 
     vertex_ai_llama_model: str = Field(..., json_schema_extra={'env': 'VERTEX_AI_LLAMA_MODEL'})
+    bigquery_dataset_id: str = Field(..., json_schema_extra={'env': 'BIGQUERY_DATASET_ID'})
 
     @classmethod
     def load_env_file_if_present(cls):
