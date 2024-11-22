@@ -1,14 +1,16 @@
 import pdfplumber
+from io import BytesIO
+from typing import Union
 
 class PDFExtractionError(Exception):
     """Custom exception for PDF extraction errors."""
     pass
 
-def extract_text_from_pdf(pdf_path: str) -> str:
+def extract_text_from_pdf(pdf: Union[str, BytesIO]) -> str:
     """Extract text from a PDF file using pdfplumber.
 
     Args:
-        pdf_path (str): PDF file path.
+        pdf (Union[str, BytesIO]): Path to the PDF file or a BytesIO object.
 
     Returns:
         str: Text extracted from the PDF file.
@@ -17,7 +19,7 @@ def extract_text_from_pdf(pdf_path: str) -> str:
         PDFExtractionError: If the PDF cannot be opened or processed.
     """
     try:
-        with pdfplumber.open(pdf_path) as pdf:
+        with pdfplumber.open(pdf) as pdf:
             text = ''.join(page.extract_text() or '' for page in pdf.pages)
         return text
     except Exception as e:
