@@ -22,10 +22,12 @@ class TestSettings:
             # Test all environment variables are set
             (
                 {
-                    'VERTEX_AI_LLAMA_MODEL': 'llama3.2-test'
+                    'VERTEX_AI_LLAMA_MODEL': 'llama3.2-test',
+                    'BIGQUERY_DATASET_ID': 'test_dataset'
                 },
                 {
-                    'vertex_ai_llama_model': 'llama3.2-test'
+                    'vertex_ai_llama_model': 'llama3.2-test',
+                    'bigquery_dataset_id': 'test_dataset'
                 }
             )
         ]
@@ -60,7 +62,17 @@ class TestSettings:
             # Test missing vertex_ai_llama_model
             (
                 'vertex_ai_llama_model',
-                {},
+                {'BIGQUERY_DATASET_ID': 'test_dataset'},
+            ),
+            # Test missing bigquery_dataset_id
+            (
+                'bigquery_dataset_id',
+                {'VERTEX_AI_LLAMA_MODEL': 'llama3.2-test'}
+            ),
+            # Test missing both vertex_ai_llama_model and bigquery_dataset_id
+            (
+                'ALL',
+                {}
             )
         ]
     )
@@ -92,4 +104,9 @@ class TestSettings:
         # Check the error message contains the missing field
         error_message = str(exc_info.value)
 
-        assert missing_field in error_message, f"Error should mention missing field '{missing_field}'"
+        if missing_field != 'ALL':
+            assert missing_field in error_message, f"Error should mention missing field '{missing_field}'"
+        else:
+            assert any (
+                field in error_message for field in ['vertex_ai_llama_model', 'bigquery_dataset_id']
+            ), "Error should mention missing fields 'vertex_ai_llama_model' and 'bigquery_dataset_id'"
