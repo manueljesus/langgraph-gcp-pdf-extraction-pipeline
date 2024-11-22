@@ -15,6 +15,8 @@ class TestSettings:
         """
 
         monkeypatch.delenv('VERTEX_AI_LLAMA_MODEL', raising=False)
+        monkeypatch.delenv('BIGQUERY_DATASET_ID', raising=False)
+        monkeypatch.delenv('GOOGLE_STORAGE_BUCKET_NAME', raising=False)
 
     @pytest.mark.parametrize(
         "env_vars, expected_values",
@@ -23,11 +25,13 @@ class TestSettings:
             (
                 {
                     'VERTEX_AI_LLAMA_MODEL': 'llama3.2-test',
-                    'BIGQUERY_DATASET_ID': 'test_dataset'
+                    'BIGQUERY_DATASET_ID': 'test_dataset',
+                    'GOOGLE_STORAGE_BUCKET_NAME': 'test_bucket'
                 },
                 {
                     'vertex_ai_llama_model': 'llama3.2-test',
-                    'bigquery_dataset_id': 'test_dataset'
+                    'bigquery_dataset_id': 'test_dataset',
+                    'google_storage_bucket_name': 'test_bucket'
                 }
             )
         ]
@@ -62,12 +66,17 @@ class TestSettings:
             # Test missing vertex_ai_llama_model
             (
                 'vertex_ai_llama_model',
-                {'BIGQUERY_DATASET_ID': 'test_dataset'},
+                {'BIGQUERY_DATASET_ID': 'test_dataset', 'GOOGLE_STORAGE_BUCKET_NAME': 'test_bucket'},
             ),
             # Test missing bigquery_dataset_id
             (
                 'bigquery_dataset_id',
-                {'VERTEX_AI_LLAMA_MODEL': 'llama3.2-test'}
+                {'VERTEX_AI_LLAMA_MODEL': 'llama3.2-test', 'GOOGLE_STORAGE_BUCKET_NAME': 'test_bucket'}
+            ),
+            # Test missing google_storage_bucket_name
+            (
+                'google_storage_bucket_name',
+                {'VERTEX_AI_LLAMA_MODEL': 'llama3.2-test', 'BIGQUERY_DATASET_ID': 'test_dataset'}
             ),
             # Test missing both vertex_ai_llama_model and bigquery_dataset_id
             (
