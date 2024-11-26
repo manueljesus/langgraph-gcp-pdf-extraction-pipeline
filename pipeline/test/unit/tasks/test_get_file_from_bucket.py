@@ -5,6 +5,7 @@ from unittest.mock import patch, MagicMock
 
 from src.tasks.get_file_from_bucket import get_file_from_bucket
 
+
 class TestGetFileFromBucket:
     @pytest.fixture
     def mock_get_settings(self) -> Generator[MagicMock, None, None]:
@@ -13,7 +14,6 @@ class TestGetFileFromBucket:
             mock_settings.return_value.bucket_name = "test-bucket"
             yield mock_settings
 
-
     @pytest.fixture
     def mock_storage_client(self) -> Generator[MagicMock, None, None]:
         """Fixture to mock the Google Cloud Storage client."""
@@ -21,7 +21,6 @@ class TestGetFileFromBucket:
             mock_instance = MagicMock()
             mock_client.return_value = mock_instance
             yield mock_instance
-
 
     @pytest.fixture
     def mock_bucket(
@@ -32,7 +31,6 @@ class TestGetFileFromBucket:
         mock_bucket = MagicMock()
         mock_storage_client.bucket.return_value = mock_bucket
         yield mock_bucket
-
 
     @pytest.fixture
     def mock_blob(

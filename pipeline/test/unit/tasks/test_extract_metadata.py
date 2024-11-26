@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import MagicMock, patch
 from src.tasks.extract_metadata import extract_metadata
 

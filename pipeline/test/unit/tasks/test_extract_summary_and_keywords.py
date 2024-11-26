@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import MagicMock, patch
 from src.tasks.extract_summary_and_keywords import extract_summary_and_keywords
 
@@ -10,14 +9,14 @@ class TestExtractMetadata:
         mock_llm_request: MagicMock
     ):
         mock_llm_request.return_value = """{
-            "summary": "We conducted a series of experiments using a randomized controlled trial design to evaluate the effectiveness of the proposed algorithm.",
+            "summary": "We conducted a series of experiments using a randomized controlled trial...",
             "keywords": ["algorithm", "experiments", "randomized controlled trial"]
         }"""
 
         input_text = """Some content of the paper."""
 
         expected_output = {
-            "summary": "We conducted a series of experiments using a randomized controlled trial design to evaluate the effectiveness of the proposed algorithm.",
+            "summary": "We conducted a series of experiments using a randomized controlled trial...",
             "keywords": ["algorithm", "experiments", "randomized controlled trial"]
         }
 
