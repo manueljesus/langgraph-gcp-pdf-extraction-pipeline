@@ -11,6 +11,7 @@ from src.utils.vertex_ai_llama_client import (
     VertexAILlamaError,
 )
 
+
 class TestVertexAILlama:
     """
     Test suite for Vertex AI Llama functions.
@@ -78,7 +79,6 @@ class TestVertexAILlama:
             credentials = get_credentials()
             assert credentials == mock_credentials
             mock_default.assert_called_once_with(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-
 
     def test_get_credentials_refresh_fail(
         self,
