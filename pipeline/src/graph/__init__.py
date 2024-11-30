@@ -4,3 +4,4 @@ from .load_pdf_node import LoadPDF
 from .extract_metadata_node import ExtractMetadata
 from .extract_summary_and_keywords_node import ExtractSummaryAndKeywords
 from .extract_key_research_findings_and_methodology_node import ExtractKeyResearchFindingsAndMethodology
+from .merge_results_node import MergeResults
