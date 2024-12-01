@@ -6,3 +6,4 @@ from .extract_summary_and_keywords_node import ExtractSummaryAndKeywords
 from .extract_key_research_findings_and_methodology_node import ExtractKeyResearchFindingsAndMethodology
 from .merge_results_node import MergeResults
 from .insert_data_into_bigquery_node import InsertDataIntoBigQuery
+from .pipeline_builder import PipelineBuilder
