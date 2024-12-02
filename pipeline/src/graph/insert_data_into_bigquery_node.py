@@ -8,14 +8,6 @@ class InsertDataIntoBigQuery:
     """
     Pipeline node to insert data into BigQuery
     """
-    def __init__(
-        self,
-        client: Client,
-        paper_id: str
-    ):
-        self.client = client
-        self.paper_id = paper_id
-
     def __call__(
         self,
         state: PipelineState
@@ -23,10 +15,10 @@ class InsertDataIntoBigQuery:
         try:
             data = state["state"]
             data.pop("text", None)
+            paper_id = data.pop("paper_id")
 
             insert_data_into_bigquery(
-                self.client,
-                self.paper_id,
+                paper_id,
                 data
             )
 

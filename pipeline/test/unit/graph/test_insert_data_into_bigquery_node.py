@@ -21,6 +21,7 @@ class TestInsertDataIntoBigQueryNode:
             "state":
                 {
                     "text": "text",
+                    "paper_id": "paper_id",
                     "title": "title",
                     "authors": "authors",
                     "abstract": "abstract",
@@ -33,26 +34,15 @@ class TestInsertDataIntoBigQueryNode:
         }
 
     @pytest.fixture
-    def mock_bigquery_client(
-        self
-    ) -> MagicMock:
-        return MagicMock()
-
-    @pytest.fixture
     def insert_data_into_bigquery(
-        self,
-        mock_bigquery_client: MagicMock
+        self
     ) -> InsertDataIntoBigQuery:
-        return InsertDataIntoBigQuery(
-            mock_bigquery_client,
-            "paper_id"
-        )
+        return InsertDataIntoBigQuery()
 
     def test_insert_data_into_bigquery(
             self,
             mock_pipeline_state: PipelineState,
             mock_insert_data_into_bigquery_task: MagicMock,
-            mock_bigquery_client: MagicMock,
             insert_data_into_bigquery: InsertDataIntoBigQuery
     ) -> None:
         """
@@ -61,7 +51,6 @@ class TestInsertDataIntoBigQueryNode:
         result = insert_data_into_bigquery(mock_pipeline_state)
 
         mock_insert_data_into_bigquery_task.assert_called_once_with(
-            mock_bigquery_client,
             "paper_id",
             {
                 "title": "title",

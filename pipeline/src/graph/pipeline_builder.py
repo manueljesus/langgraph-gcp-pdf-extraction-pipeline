@@ -43,13 +43,7 @@ class PipelineBuilder:
         )
         self.pipeline.add_node("Extract Summary And Keywords", ExtractSummaryAndKeywords())
         self.pipeline.add_node("Merge Results", MergeResults())
-        self.pipeline.add_node(
-            "Insert Data Into BigQuery",
-            InsertDataIntoBigQuery(
-                self.bigquery_client,
-                self.paper_id
-            )
-        )
+        self.pipeline.add_node("Insert Data Into BigQuery", InsertDataIntoBigQuery())
 
     def add_edges(self):
         """
