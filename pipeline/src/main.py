@@ -3,6 +3,7 @@ import logging
 import functions_framework
 
 from cloudevents.http import CloudEvent
+from src.graph import PipelineBuilder
 
 logging.basicConfig(level=logging.INFO)
 
@@ -15,5 +16,8 @@ def pipeline(event: CloudEvent) -> None:
     """
     try:
         logging.info(event)
+        pipeline_builder = PipelineBuilder(file=event.data["name"])
+        pipeline = pipeline_builder()
+        pipeline.invoke({"state": {}})
     except Exception as e:
         logging.exception(e)

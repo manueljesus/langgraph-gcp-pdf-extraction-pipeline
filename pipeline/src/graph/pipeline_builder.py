@@ -24,7 +24,7 @@ class PipelineBuilder:
     """
     def __init__(
         self,
-        file: Union[str, BytesIO]
+        file: str
     ):
         self.file = file
         self.pipeline: StateGraph = StateGraph(PipelineState)
