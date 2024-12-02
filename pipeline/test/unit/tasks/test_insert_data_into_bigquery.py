@@ -12,7 +12,7 @@ class TestInsertDataIntoBigQuery:
         with patch("src.tasks.insert_data_into_bigquery.Client") as mock_client_cls:
             mock_client = MagicMock(spec=Client)
             mock_client_cls.return_value = mock_client
-            mock_client.project_id = "test_project"
+            mock_client.project = "test_project"
             yield mock_client
 
     @pytest.fixture
