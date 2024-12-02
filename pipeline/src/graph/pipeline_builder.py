@@ -7,6 +7,8 @@ from google.cloud.bigquery import Client as BigQueryClient
 
 from src.graph import (
     PipelineState,
+    GetFile,
+    CheckProcessedPaper,
     LoadPDF,
     ExtractMetadata,
     ExtractKeyResearchFindingsAndMethodology,
@@ -22,19 +24,17 @@ class PipelineBuilder:
     """
     def __init__(
         self,
-        file: Union[str, BytesIO],
-        paper_id: str,
-        bigquery_client: BigQueryClient
+        file: Union[str, BytesIO]
     ):
         self.file = file
         self.pipeline: StateGraph = StateGraph(PipelineState)
-        self.paper_id = paper_id
-        self.bigquery_client = bigquery_client
 
     def add_nodes(self):
         """
         Add all nodes to the pipeline.
         """
+        self.pipeline.add_node("Get File", GetFile(self.file))
+        self.pipeline.add_node("Check Processed Paper", CheckProcessedPaper())
         self.pipeline.add_node("Load PDF", LoadPDF())
         self.pipeline.add_node("Extract Metadata", ExtractMetadata())
         self.pipeline.add_node(
@@ -49,7 +49,13 @@ class PipelineBuilder:
         """
         Add all edges to define the pipeline flow.
         """
-        self.pipeline.add_edge(START, "Load PDF")
+        self.pipeline.add_edge(START, "Get File")
+        self.pipeline.add_edge("Get File", "Check Processed Paper")
+        self.pipeline.add_conditional_edges(
+            source="Check Processed Paper",
+            path=lambda state: state.get("state", {}).get("processed", False),
+            path_map={True: END, False: "Load PDF"}
+        )
         self.pipeline.add_edge("Load PDF", "Extract Metadata")
         self.pipeline.add_edge("Load PDF", "Extract Key Research Findings And Methodology")
         self.pipeline.add_edge("Load PDF", "Extract Summary And Keywords")
