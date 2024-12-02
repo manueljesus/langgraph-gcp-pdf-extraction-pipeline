@@ -105,7 +105,7 @@ class TestPipelineBuilder:
         Test that the pipeline ends early when the paper is already processed.
         """
         # Mock state indicating the paper is already processed
-        mock_check_processed_paper.return_value = {"state": {"processed": True}}
+        mock_check_processed_paper.return_value = True
         mock_get_file.return_value = BytesIO(b"Mock file content")
 
         # Compile and execute the pipeline
@@ -154,7 +154,7 @@ class TestPipelineBuilder:
         mock_insert_data_bigquery.return_value = mock_pipeline_state
         mock_settings.return_value.bigquery_dataset_id = "test_dataset"
         mock_settings.return_value.bucket_name = "test_bucket"
-        mock_check_processed_paper.return_value = {"state": {"processed": False}}
+        mock_check_processed_paper.return_value = False
         mock_get_file.return_value = mock_file
         mock_file_hash.return_value = paper_id
 

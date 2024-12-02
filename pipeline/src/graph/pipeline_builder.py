@@ -52,9 +52,12 @@ class PipelineBuilder:
         self.pipeline.add_edge(START, "Get File")
         self.pipeline.add_edge("Get File", "Check Processed Paper")
         self.pipeline.add_conditional_edges(
-            source="Check Processed Paper",
-            path=lambda state: state.get("state", {}).get("processed", False),
-            path_map={True: END, False: "Load PDF"}
+            "Check Processed Paper",
+            self._conditional_route,
+            {
+                "load_pdf": "Load PDF",
+                "end": END
+            }
         )
         self.pipeline.add_edge("Load PDF", "Extract Metadata")
         self.pipeline.add_edge("Load PDF", "Extract Key Research Findings And Methodology")
@@ -64,6 +67,15 @@ class PipelineBuilder:
         self.pipeline.add_edge("Extract Summary And Keywords", "Merge Results")
         self.pipeline.add_edge("Merge Results", "Insert Data Into BigQuery")
         self.pipeline.add_edge("Insert Data Into BigQuery", END)
+
+    def _conditional_route(self, state: PipelineState) -> str:
+        """
+        Determine the next node based on the state.
+        """
+        import pytest
+        if state.get('state', {}).get('processed', False):
+            return "end"
+        return "load_pdf"
 
     def __call__(self) -> CompiledStateGraph:
         """
