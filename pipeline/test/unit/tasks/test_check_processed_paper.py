@@ -17,9 +17,9 @@ class TestCheckProcessedPaper:
             yield mock_client
 
     @pytest.fixture
-    def mock_get_settings(self) -> Generator[MagicMock, None, None]:
-        """Fixture to patch `get_settings`."""
-        with patch("src.tasks.check_processed_paper.get_settings") as mock_settings:
+    def mock_settings(self) -> Generator[MagicMock, None, None]:
+        """Fixture to patch `settings`."""
+        with patch("src.tasks.check_processed_paper.Settings") as mock_settings:
             mock_settings.return_value.bigquery_dataset_id = "test_dataset"
             yield mock_settings
 
@@ -36,7 +36,7 @@ class TestCheckProcessedPaper:
         query_result: list,
         expected_result: bool,
         mock_client: MagicMock,
-        mock_get_settings: MagicMock,
+        mock_settings: MagicMock,
     ):
         """Test check_processed_paper function with parameterized inputs."""
         mock_client.query.return_value = iter(query_result)
@@ -52,7 +52,7 @@ class TestCheckProcessedPaper:
         expected_job_config = QueryJobConfig(
             query_parameters=[
                 ScalarQueryParameter("project_id", "STRING", mock_client.project),
-                ScalarQueryParameter("dataset_id", "STRING", mock_get_settings().bigquery_dataset_id),
+                ScalarQueryParameter("dataset_id", "STRING", mock_settings().bigquery_dataset_id),
                 ScalarQueryParameter("paper_id", "STRING", paper_id)
             ]
         )
@@ -76,7 +76,7 @@ class TestCheckProcessedPaper:
     def test_check_processed_paper_query_error(
         self,
         mock_client: MagicMock,
-        mock_get_settings: MagicMock,
+        mock_settings: MagicMock,
     ):
         """Test that an exception is properly raised when the query fails."""
         # Simulate a query error

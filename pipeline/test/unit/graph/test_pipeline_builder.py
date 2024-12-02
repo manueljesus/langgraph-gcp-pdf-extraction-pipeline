@@ -118,7 +118,7 @@ class TestPipelineBuilder:
     @patch("src.graph.get_file_node.get_file_from_bucket")
     @patch("src.graph.get_file_node.generate_file_hash")
     @patch("src.graph.check_processed_paper_node.check_processed_paper")
-    @patch("src.tasks.insert_data_into_bigquery.get_settings")
+    @patch("src.tasks.insert_data_into_bigquery.Settings")
     @patch("src.graph.insert_data_into_bigquery_node.InsertDataIntoBigQuery.__call__")
     @patch("src.graph.merge_results_node.MergeResults.__call__")
     @patch("src.graph.extract_summary_and_keywords_node.ExtractSummaryAndKeywords.__call__")
@@ -133,7 +133,7 @@ class TestPipelineBuilder:
         mock_extract_summary_keywords: MagicMock,
         mock_merge_results: MagicMock,
         mock_insert_data_bigquery: MagicMock,
-        mock_get_settings: MagicMock,
+        mock_settings: MagicMock,
         mock_check_processed_paper: MagicMock,
         mock_file_hash: MagicMock,
         mock_get_file: MagicMock,
@@ -152,8 +152,8 @@ class TestPipelineBuilder:
         mock_extract_summary_keywords.return_value = mock_pipeline_state
         mock_merge_results.return_value = mock_pipeline_state
         mock_insert_data_bigquery.return_value = mock_pipeline_state
-        mock_get_settings.return_value.bigquery_dataset_id = "test_dataset"
-        mock_get_settings.return_value.bucket_name = "test_bucket"
+        mock_settings.return_value.bigquery_dataset_id = "test_dataset"
+        mock_settings.return_value.bucket_name = "test_bucket"
         mock_check_processed_paper.return_value = {"state": {"processed": False}}
         mock_get_file.return_value = mock_file
         mock_file_hash.return_value = paper_id

@@ -26,7 +26,7 @@ class TestVertexAILlama:
         return credentials
 
     @pytest.fixture
-    def mock_settings(self):
+    def settings(self):
         """Fixture for mocked settings."""
         settings = MagicMock()
         settings.vertex_ai_llama_model = "test_model"
@@ -53,14 +53,14 @@ class TestVertexAILlama:
             yield mock_get_credentials
 
     @pytest.fixture
-    def patch_get_settings(
+    def patch_settings(
         self,
-        mock_settings
+        settings
     ):
-        """Patch get_settings to return mock settings."""
-        with patch("src.utils.vertex_ai_llama_client.get_settings") as mock_get_settings:
-            mock_get_settings.return_value = mock_settings
-            yield mock_get_settings
+        """Patch settings to return mock settings."""
+        with patch("src.utils.vertex_ai_llama_client.Settings") as mock_settings:
+            mock_settings.return_value = settings
+            yield mock_settings
 
     @pytest.fixture
     def patch_requests_post(self):
@@ -160,7 +160,7 @@ class TestVertexAILlama:
     def test_vertex_ai_llama_request_success(
         self,
         patch_get_credentials,
-        patch_get_settings,
+        patch_settings,
         patch_requests_post
     ):
         """
@@ -192,7 +192,7 @@ class TestVertexAILlama:
     def test_vertex_ai_llama_request_failure(
         self,
         patch_get_credentials,
-        patch_get_settings,
+        patch_settings,
         patch_requests_post
     ):
         """

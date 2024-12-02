@@ -8,9 +8,9 @@ from src.tasks import get_file_from_bucket, GoogleStorageError
 
 class TestGetFileFromBucket:
     @pytest.fixture
-    def mock_get_settings(self) -> Generator[MagicMock, None, None]:
-        """Fixture to mock get_settings."""
-        with patch("src.tasks.get_file_from_bucket.get_settings") as mock_settings:
+    def mock_settings(self) -> Generator[MagicMock, None, None]:
+        """Fixture to mock settings."""
+        with patch("src.tasks.get_file_from_bucket.Settings") as mock_settings:
             mock_settings.return_value.bucket_name = "test-bucket"
             yield mock_settings
 
@@ -44,7 +44,7 @@ class TestGetFileFromBucket:
 
     def test_get_file_from_bucket_success(
         self,
-        mock_get_settings: MagicMock,
+        mock_settings: MagicMock,
         mock_storage_client: MagicMock,
         mock_bucket: MagicMock,
         mock_blob: MagicMock
@@ -60,13 +60,13 @@ class TestGetFileFromBucket:
 
         assert isinstance(result, io.BytesIO)
         assert result.read() == b"test content"
-        mock_storage_client.bucket.assert_called_once_with(mock_get_settings.return_value.bucket_name)
+        mock_storage_client.bucket.assert_called_once_with(mock_settings.return_value.google_storage_bucket_name)
         mock_bucket.blob.assert_called_once_with(file_name)
         mock_blob.download_as_bytes.assert_called_once()
 
     def test_get_file_from_bucket_error(
         self,
-        mock_get_settings: MagicMock,
+        mock_settings: MagicMock,
         mock_storage_client: MagicMock,
         mock_bucket: MagicMock,
         mock_blob: MagicMock
@@ -81,6 +81,6 @@ class TestGetFileFromBucket:
         with pytest.raises(GoogleStorageError, match="Failed to download file from Google Cloud Storage: Unexpected error"):
             get_file_from_bucket(file_name)
 
-        mock_storage_client.bucket.assert_called_once_with(mock_get_settings.return_value.bucket_name)
+        mock_storage_client.bucket.assert_called_once_with(mock_settings.return_value.google_storage_bucket_name)
         mock_bucket.blob.assert_called_once_with(file_name)
         mock_blob.download_as_bytes.assert_called_once()

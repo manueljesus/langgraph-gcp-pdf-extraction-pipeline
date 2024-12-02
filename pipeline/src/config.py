@@ -14,26 +14,10 @@ class Settings(BaseSettings):
 
     Attributes:
         vertex_ai_llama_model (str): The Llama model name served on Vertex AI API service.
+        bigquery_dataset_id (str): The BigQuery dataset ID for storing extracted data.
+        google_storage_bucket_name (str): The Google Cloud Storage bucket name for storing extracted data.
     """
 
     vertex_ai_llama_model: str = Field(..., json_schema_extra={'env': 'VERTEX_AI_LLAMA_MODEL'})
     bigquery_dataset_id: str = Field(..., json_schema_extra={'env': 'BIGQUERY_DATASET_ID'})
     google_storage_bucket_name: str = Field(..., json_schema_extra={'env': 'GOOGLE_STORAGE_BUCKET_NAME'})
-
-    @classmethod
-    def load_env_file_if_present(cls):
-        """
-        Check for `.env` file and set it in the configuration if it exists.
-        """
-        if os.path.exists(".env"):
-            cls.model_config = ConfigDict(env_file=".env")
-
-@lru_cache
-def get_settings() -> Settings:  # pragma: no cover
-    """
-    Get the configuration settings for the pipeline.
-
-    This function dynamically loads the `.env` file (if present) and
-    caches the settings instance for reuse.
-    """
-    return Settings.load_env_file_if_present()

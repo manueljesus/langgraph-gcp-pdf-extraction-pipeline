@@ -117,5 +117,5 @@ class TestSettings:
             assert missing_field in error_message, f"Error should mention missing field '{missing_field}'"
         else:
             assert any (
-                field in error_message for field in ['vertex_ai_llama_model', 'bigquery_dataset_id']
-            ), "Error should mention missing fields 'vertex_ai_llama_model' and 'bigquery_dataset_id'"
+                field in error_message for field in ['vertex_ai_llama_model', 'bigquery_dataset_id', 'google_storage_bucket_name']
+            ), "Error should mention missing fields 'vertex_ai_llama_model', 'bigquery_dataset_id' and 'google_storage_bucket_name'"

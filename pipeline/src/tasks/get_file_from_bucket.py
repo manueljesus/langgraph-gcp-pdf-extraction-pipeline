@@ -1,6 +1,6 @@
 from io import BytesIO
 from google.cloud import storage
-from src.config import get_settings
+from src.config import Settings
 from src.tasks import GoogleStorageError
 
 def get_file_from_bucket(file_name: str) -> BytesIO:
@@ -22,7 +22,7 @@ def get_file_from_bucket(file_name: str) -> BytesIO:
         storage_client = storage.Client()
 
         # Retrieve bucket details from settings
-        bucket_name = get_settings().bucket_name
+        bucket_name = Settings().google_storage_bucket_name
         bucket = storage_client.bucket(bucket_name)
 
         # Get the blob (file) from the bucket

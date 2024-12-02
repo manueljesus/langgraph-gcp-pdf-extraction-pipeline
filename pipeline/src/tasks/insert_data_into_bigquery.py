@@ -1,7 +1,7 @@
 
 from google.cloud.bigquery import Client
 
-from src.config import get_settings
+from src.config import Settings
 from src.utils.hash import generate_unique_hash
 from src.tasks import BigQueryError
 
@@ -16,7 +16,7 @@ def insert_data_into_bigquery(
         paper_id (str): Unique identifier for the research paper.
         data (dict): Research paper data.
     """
-    dataset_id: str = get_settings().bigquery_dataset_id
+    dataset_id: str = Settings().bigquery_dataset_id
     client = Client()
 
     _insert_research_papers(client, dataset_id, paper_id, data)

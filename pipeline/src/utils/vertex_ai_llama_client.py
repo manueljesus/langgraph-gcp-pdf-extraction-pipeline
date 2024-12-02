@@ -3,7 +3,7 @@ from google.auth import default
 from google.auth.exceptions import GoogleAuthError
 from google.auth.transport.requests import Request
 
-from src.config import get_settings
+from src.config import Settings
 
 class VertexAILlamaError(Exception):
     """Custom exception for errors related to Vertex AI Llama interactions."""
@@ -97,7 +97,7 @@ def vertex_ai_llama_request(prompt: str) -> str:
     }
 
     payload = {
-        "model": get_settings().vertex_ai_llama_model,
+        "model": Settings().vertex_ai_llama_model,
         "stream": False,
         "messages": [{"role": "user", "content": prompt}]
     }

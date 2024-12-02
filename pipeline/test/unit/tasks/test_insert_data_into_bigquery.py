@@ -29,17 +29,17 @@ class TestInsertDataIntoBigQuery:
             "key_research_findings": ["Finding one", "Finding two"],
         }
 
-    @patch("src.tasks.insert_data_into_bigquery.get_settings")
+    @patch("src.tasks.insert_data_into_bigquery.Settings")
     @patch("src.tasks.insert_data_into_bigquery.generate_unique_hash")
     def test_insert_data_success(
         self,
         mock_generate_hash: MagicMock,
-        mock_get_settings: MagicMock,
+        mock_settings: MagicMock,
         mock_client: MagicMock,
         sample_data: Dict[str, str]
     ):
         """Test successful data insertion into BigQuery."""
-        mock_get_settings.return_value.bigquery_dataset_id = "test_dataset"
+        mock_settings.return_value.bigquery_dataset_id = "test_dataset"
         mock_generate_hash.side_effect = lambda x: f"hash_{x}"
 
         # Call the function
@@ -107,16 +107,16 @@ class TestInsertDataIntoBigQuery:
             ],
         )
 
-    @patch("src.tasks.insert_data_into_bigquery.get_settings")
+    @patch("src.tasks.insert_data_into_bigquery.Settings")
     def test_insert_data_failure(
         self,
-        mock_get_settings: MagicMock,
+        mock_settings: MagicMock,
         mock_client: MagicMock,
         sample_data: Dict[str, str]
     ):
         """Test BigQueryError is raised on insertion failure."""
         # Mock settings
-        mock_get_settings.return_value.bigquery_dataset_id = "test_dataset"
+        mock_settings.return_value.bigquery_dataset_id = "test_dataset"
 
         # Simulate an insertion failure
         mock_client.insert_rows_json.side_effect = Exception("Mocked insertion error")

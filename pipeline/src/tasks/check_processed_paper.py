@@ -1,7 +1,7 @@
 from google.cloud.bigquery import Client, QueryJobConfig, ScalarQueryParameter
 from textwrap import dedent
 
-from src.config import get_settings
+from src.config import Settings
 from src.tasks import BigQueryError
 
 def check_processed_paper(
@@ -30,7 +30,7 @@ def check_processed_paper(
             job_config=QueryJobConfig(
                 query_parameters=[
                     ScalarQueryParameter("project_id", "STRING", client.project),
-                    ScalarQueryParameter("dataset_id", "STRING", get_settings().bigquery_dataset_id),
+                    ScalarQueryParameter("dataset_id", "STRING", Settings().bigquery_dataset_id),
                     ScalarQueryParameter("paper_id", "STRING", paper_id)
                 ]
             )
