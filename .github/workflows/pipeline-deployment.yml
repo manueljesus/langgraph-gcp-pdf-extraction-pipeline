@@ -36,3 +36,7 @@ jobs:
           source_dir: ./pipeline
           build_environment_variables: |-
             GOOGLE_FUNCTION_SOURCE=src/main.py
+          environment_variables: |
+            VERTEX_AI_LLAMA_MODEL=${{ vars.VERTEX_AI_LLAMA_MODEL }}
+            BIGQUERY_DATASET_ID=${{ vars.BIGQUERY_DATASET_ID }}
+            GOOGLE_STORAGE_BUCKET_NAME=${{ vars.GOOGLE_STORAGE_BUCKET_NAME }}
