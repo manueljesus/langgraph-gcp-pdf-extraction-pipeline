@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock, patch
+from io import BytesIO
 from src.graph import PipelineState, GraphError, MergeResults
 
 
@@ -11,6 +11,8 @@ class TestMergeResultsNode:
         """
         return {
             "state": {
+                "file": BytesIO(b"Mock PDF content"),
+                "paper_id": "mock-paper-id",
                 "text": "Text",
                 "metadata": {"title": "title", "authors": "authors", "abstract": "abstract", "publication_date": "publication_date"},
                 "summary": {"summary": "summary", "keywords": "keywords"},
