@@ -3,10 +3,7 @@ from google.cloud.bigquery import Client
 
 from src.config import get_settings
 from src.utils.hash import generate_unique_hash
-
-class BigQueryError(Exception):
-    """Custom exception for errors related to BigQuery interactions."""
-    pass
+from src.tasks import BigQueryError
 
 def insert_data_into_bigquery(
     client: Client,

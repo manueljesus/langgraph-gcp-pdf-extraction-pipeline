@@ -3,7 +3,7 @@ import pytest
 from typing import Generator
 from unittest.mock import patch, MagicMock
 
-from src.tasks.get_file_from_bucket import get_file_from_bucket
+from src.tasks import get_file_from_bucket, GoogleStorageError
 
 
 class TestGetFileFromBucket:
@@ -42,7 +42,13 @@ class TestGetFileFromBucket:
         mock_bucket.blob.return_value = mock_blob
         yield mock_blob
 
-    def test_get_file_from_bucket_success(self, mock_get_settings, mock_storage_client, mock_bucket, mock_blob):
+    def test_get_file_from_bucket_success(
+        self,
+        mock_get_settings: MagicMock,
+        mock_storage_client: MagicMock,
+        mock_bucket: MagicMock,
+        mock_blob: MagicMock
+    ):
         """
         Test successful retrieval of a file from the bucket.
         """
@@ -58,7 +64,13 @@ class TestGetFileFromBucket:
         mock_bucket.blob.assert_called_once_with(file_name)
         mock_blob.download_as_bytes.assert_called_once()
 
-    def test_get_file_from_bucket_error(self, mock_get_settings, mock_storage_client, mock_bucket, mock_blob):
+    def test_get_file_from_bucket_error(
+        self,
+        mock_get_settings: MagicMock,
+        mock_storage_client: MagicMock,
+        mock_bucket: MagicMock,
+        mock_blob: MagicMock
+    ):
         """
         Test the behavior when another error occurs during file retrieval.
         """
@@ -66,7 +78,7 @@ class TestGetFileFromBucket:
 
         file_name = "test-file.txt"
 
-        with pytest.raises(Exception, match="Unexpected error"):
+        with pytest.raises(GoogleStorageError, match="Failed to download file from Google Cloud Storage: Unexpected error"):
             get_file_from_bucket(file_name)
 
         mock_storage_client.bucket.assert_called_once_with(mock_get_settings.return_value.bucket_name)

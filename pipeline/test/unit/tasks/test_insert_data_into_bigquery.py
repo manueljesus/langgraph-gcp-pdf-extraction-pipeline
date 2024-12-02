@@ -2,7 +2,7 @@ import pytest
 from typing import Dict
 from unittest.mock import MagicMock, patch
 from google.cloud.bigquery import Client
-from src.tasks.insert_data_into_bigquery import insert_data_into_bigquery, BigQueryError
+from src.tasks import insert_data_into_bigquery, BigQueryError
 
 
 class TestInsertDataIntoBigQuery:

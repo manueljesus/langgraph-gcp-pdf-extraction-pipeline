@@ -1,10 +1,7 @@
 from io import BytesIO
 from google.cloud import storage
 from src.config import get_settings
-
-class GoogleStorageError(Exception):
-    """Custom exception for errors related to Google Cloud Storage interactions."""
-    pass
+from src.tasks import GoogleStorageError
 
 def get_file_from_bucket(file_name: str) -> BytesIO:
     """
