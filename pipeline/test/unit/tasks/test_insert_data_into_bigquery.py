@@ -1,17 +1,19 @@
 import pytest
-from typing import Dict
+from typing import Dict, Generator
 from unittest.mock import MagicMock, patch
 from google.cloud.bigquery import Client
-from src.tasks.insert_data_into_bigquery import insert_data_into_bigquery, BigQueryError
+from src.tasks import insert_data_into_bigquery, BigQueryError
 
 
 class TestInsertDataIntoBigQuery:
     @pytest.fixture
-    def mock_client(self) -> MagicMock:
+    def mock_client(self) -> Generator[MagicMock, None, None]:
         """Fixture to create a mock BigQuery client."""
-        client = MagicMock(spec=Client)
-        client.project_id = "test_project"  # Set the mock project_id attribute
-        return client
+        with patch("src.tasks.insert_data_into_bigquery.Client") as mock_client_cls:
+            mock_client = MagicMock(spec=Client)
+            mock_client_cls.return_value = mock_client
+            mock_client.project_id = "test_project"
+            yield mock_client
 
     @pytest.fixture
     def sample_data(self) -> Dict[str, str]:
@@ -42,7 +44,7 @@ class TestInsertDataIntoBigQuery:
 
         # Call the function
         paper_id = "test_paper_id"
-        insert_data_into_bigquery(mock_client, paper_id, sample_data)
+        insert_data_into_bigquery(paper_id, sample_data)
 
         # Validate that each table insertion method was called with correct arguments
         mock_client.insert_rows_json.assert_any_call(
@@ -120,4 +122,4 @@ class TestInsertDataIntoBigQuery:
         mock_client.insert_rows_json.side_effect = Exception("Mocked insertion error")
 
         with pytest.raises(BigQueryError, match="Failed to insert research paper data"):
-            insert_data_into_bigquery(mock_client, "test_paper_id", sample_data)
+            insert_data_into_bigquery("test_paper_id", sample_data)

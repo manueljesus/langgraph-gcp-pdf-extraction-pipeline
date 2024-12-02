@@ -3,13 +3,9 @@ from google.cloud.bigquery import Client
 
 from src.config import get_settings
 from src.utils.hash import generate_unique_hash
-
-class BigQueryError(Exception):
-    """Custom exception for errors related to BigQuery interactions."""
-    pass
+from src.tasks import BigQueryError
 
 def insert_data_into_bigquery(
-    client: Client,
     paper_id: str,
     data: dict
 ) -> None:
@@ -17,11 +13,11 @@ def insert_data_into_bigquery(
     Insert research paper data into BigQuery tables.
 
     Args:
-        client (Client): BigQuery client.
         paper_id (str): Unique identifier for the research paper.
         data (dict): Research paper data.
     """
     dataset_id: str = get_settings().bigquery_dataset_id
+    client = Client()
 
     _insert_research_papers(client, dataset_id, paper_id, data)
     _insert_authors(client, dataset_id, paper_id, data)
