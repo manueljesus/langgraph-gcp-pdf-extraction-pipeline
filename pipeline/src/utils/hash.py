@@ -1,16 +1,18 @@
 import hashlib
+from io import BytesIO
+from typing import Union
 
 class HashError(Exception):
     """Custom exception for hashing errors."""
     pass
 
 
-def generate_file_hash(file_path: str) -> str:
+def generate_file_hash(file: Union[str, BytesIO]) -> str:
     """
     Generate a SHA-256 hash for the content of a file.
 
     Parameters:
-        file_path (str): The path to the file.
+        file (Union[str, io.BytesIO]): The path to the file or a BytesIO object.
 
     Returns:
         str: The hexadecimal representation of the file's hash.
@@ -19,14 +21,15 @@ def generate_file_hash(file_path: str) -> str:
         HashError: If the file does not exist or cannot be read.
     """
     hash_func = hashlib.sha256()
-    try:
-        with open(file_path, "rb") as file:
-            for chunk in iter(lambda: file.read(4096), b""):
+
+    if isinstance(file, str):
+        with open(file, 'rb') as f:
+            for chunk in iter(lambda: f.read(4096), b""):
                 hash_func.update(chunk)
-    except FileNotFoundError:
-        raise HashError(f"File not found: {file_path}")
-    except IOError as e:
-        raise HashError(f"An error occurred while reading the file: {e}")
+    else:
+        file.seek(0)  # Ensure reading from the start
+        for chunk in iter(lambda: file.read(4096), b""):
+            hash_func.update(chunk)
 
     return hash_func.hexdigest()
 
