@@ -35,7 +35,7 @@ class PipelineBuilder:
         """
         Add all nodes to the pipeline.
         """
-        self.pipeline.add_node("Load PDF", LoadPDF(self.file))
+        self.pipeline.add_node("Load PDF", LoadPDF())
         self.pipeline.add_node("Extract Metadata", ExtractMetadata())
         self.pipeline.add_node(
             "Extract Key Research Findings And Methodology",
