@@ -72,7 +72,6 @@ class PipelineBuilder:
         """
         Determine the next node based on the state.
         """
-        import pytest
         if state.get('state', {}).get('processed', False):
             return "end"
         return "load_pdf"
