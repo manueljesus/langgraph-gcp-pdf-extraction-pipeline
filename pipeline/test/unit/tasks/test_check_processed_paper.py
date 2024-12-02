@@ -45,14 +45,12 @@ class TestCheckProcessedPaper:
 
         expected_query = dedent(f"""
             SELECT id
-            FROM `@project_id.@dataset_id.research_papers`
+            FROM `{mock_client.project}.{mock_settings().bigquery_dataset_id}.research_papers`
             WHERE id = @paper_id
         """).strip()
 
         expected_job_config = QueryJobConfig(
             query_parameters=[
-                ScalarQueryParameter("project_id", "STRING", mock_client.project),
-                ScalarQueryParameter("dataset_id", "STRING", mock_settings().bigquery_dataset_id),
                 ScalarQueryParameter("paper_id", "STRING", paper_id)
             ]
         )
