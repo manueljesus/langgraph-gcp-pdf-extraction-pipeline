@@ -21,7 +21,7 @@ def check_processed_paper(
 
         query = dedent(f"""
             SELECT id
-            FROM `@project_id.@dataset_id.research_papers`
+            FROM `{client.project}.{Settings().bigquery_dataset_id}.research_papers`
             WHERE id = @paper_id
         """).strip()
 
@@ -29,8 +29,6 @@ def check_processed_paper(
             query,
             job_config=QueryJobConfig(
                 query_parameters=[
-                    ScalarQueryParameter("project_id", "STRING", client.project),
-                    ScalarQueryParameter("dataset_id", "STRING", Settings().bigquery_dataset_id),
                     ScalarQueryParameter("paper_id", "STRING", paper_id)
                 ]
             )
