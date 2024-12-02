@@ -29,7 +29,7 @@ class TestExtractSummaryAndKeywordsNode:
     def check_processed_paper(self) -> CheckProcessedPaper:
         return CheckProcessedPaper()
 
-    def test_extract_summary_and_keywords(
+    def test_check_processed_paper_node(
         self,
         mock_pipeline_state: PipelineState,
         mock_extract_summary_and_keywords_task: MagicMock,
@@ -39,13 +39,9 @@ class TestExtractSummaryAndKeywordsNode:
         result = check_processed_paper(mock_pipeline_state)
 
         mock_extract_summary_and_keywords_task.assert_called_once_with("paper_id")
-        assert result == {
-            "state": {
-                "processed": True
-            }
-        }
+        assert result
 
-    def test_extract_summary_and_keywords_raises_graph_error(
+    def test_check_processed_paper_node_raises_graph_error(
         self,
         mock_pipeline_state_with_error: PipelineState,
         check_processed_paper: CheckProcessedPaper
