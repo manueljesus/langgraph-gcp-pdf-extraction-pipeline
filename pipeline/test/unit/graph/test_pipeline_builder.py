@@ -31,11 +31,11 @@ class TestPipelineBuilder:
         return {"state": {"processed": False, "final": "state"}}
 
     @pytest.fixture
-    def pipeline_builder(self, mock_file: BytesIO) -> PipelineBuilder:
+    def pipeline_builder(self) -> PipelineBuilder:
         """
         Fixture to instantiate the PipelineBuilder with mock dependencies.
         """
-        return PipelineBuilder(file=mock_file)
+        return PipelineBuilder(file='file.pdf')
 
     @patch("src.graph.get_file_node.get_file_from_bucket")
     @patch("src.graph.check_processed_paper_node.check_processed_paper")
