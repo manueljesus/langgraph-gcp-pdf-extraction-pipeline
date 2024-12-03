@@ -12,6 +12,11 @@ class TestInsertDataIntoBigQueryNode:
         ) as mock:
             yield mock
 
+    @pytest.fixture()
+    def mock_logger(self) -> Generator[MagicMock, None, None]:
+        with patch("src.graph.insert_data_into_bigquery_node.logger") as mock_logger:
+            yield mock_logger
+
     @pytest.fixture
     def mock_pipeline_state(self) -> PipelineState:
         """
@@ -43,6 +48,7 @@ class TestInsertDataIntoBigQueryNode:
             self,
             mock_pipeline_state: PipelineState,
             mock_insert_data_into_bigquery_task: MagicMock,
+            mock_logger: MagicMock,
             insert_data_into_bigquery: InsertDataIntoBigQuery
     ) -> None:
         """
@@ -64,16 +70,22 @@ class TestInsertDataIntoBigQueryNode:
             }
         )
 
+        mock_logger.info.assert_called_once_with("Inserting data into BigQuery")
         assert result == {"state": {}}
 
     def test_insert_data_into_bigquery_raises_error(
         self,
         mock_pipeline_state: PipelineState,
         mock_insert_data_into_bigquery_task: MagicMock,
+        mock_logger: MagicMock,
         insert_data_into_bigquery: InsertDataIntoBigQuery
     ) -> None:
-        """Test ExtractSummaryAndKeywords raises GraphError on exception."""
+        """Test InsertDataIntoBigQuery raises GraphError on exception."""
         mock_insert_data_into_bigquery_task.side_effect = Exception("Mocked exception")
 
         with pytest.raises(GraphError):
             insert_data_into_bigquery(mock_pipeline_state)
+
+        mock_logger.error.assert_called_once_with(
+            "Failed to insert data into BigQuery: Mocked exception"
+        )
