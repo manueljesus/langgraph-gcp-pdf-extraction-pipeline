@@ -3,6 +3,10 @@ from textwrap import dedent
 
 from src.config import Settings
 from src.tasks import BigQueryError
+from src.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 def check_processed_paper(
     paper_id: str
@@ -17,6 +21,7 @@ def check_processed_paper(
         bool: True if the research paper has been processed, False otherwise.
     """
     try:
+        logger.info(f"Checking if research paper with ID '{paper_id}' has already been processed")
         client = Client()
 
         query = dedent(f"""
@@ -33,7 +38,11 @@ def check_processed_paper(
                 ]
             )
         )
+        processed = len(list(query_job)) > 0
 
-        return len(list(query_job)) > 0
+        logger.info(f"Research paper with ID '{paper_id}' is{' ' if processed else ' not '}processed")
+
+        return processed
     except Exception as e:
+        logger.error(f"Failed to query research paper data: {e}")
         raise BigQueryError(f"Failed to query research paper data: {e}")
