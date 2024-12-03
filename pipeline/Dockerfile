@@ -18,6 +18,8 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 COPY requirements.txt requirements-test.txt ./
 COPY src/ test/ ./
 
+ENV PYTHONPATH = /workdir:$PYTHONPATH
+
 RUN useradd -m pipeline
 RUN chown -R pipeline:pipeline /workdir
 RUN chown -R pipeline:pipeline /usr/local/lib/python3.12/site-packages
