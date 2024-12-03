@@ -2,6 +2,10 @@ from typing import Dict, Union, List
 import json
 
 from src.utils.vertex_ai_llama_client import vertex_ai_llama_request
+from src.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 def extract_summary_and_keywords(text: str) -> Dict[str, Union[str, List[str]]]:
     """Extract a summary and keywords from the given text."""
@@ -39,17 +43,11 @@ def extract_summary_and_keywords(text: str) -> Dict[str, Union[str, List[str]]]:
     \"\"\"
     """
     try:
+        logger.info("Extracting summary and keywords")
         return json.loads(vertex_ai_llama_request(summary_prompt).strip('```json').strip('```'))
     except Exception as e:
-        print(e)
-        response_text = None
-
-
-    # Parse response assuming JSON format or key-value pairs
-    if response_text:
-        return json.loads(response_text)
-
-    return {
+        logger.error(f"Error extracting summary and keywords: {e}")
+        return {
             "summary": None,
             "keywords": None
         }

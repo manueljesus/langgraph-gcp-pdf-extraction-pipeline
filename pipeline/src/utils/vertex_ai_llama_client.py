@@ -2,12 +2,16 @@ import requests
 from google.auth import default
 from google.auth.exceptions import GoogleAuthError
 from google.auth.transport.requests import Request
-
 from src.config import Settings
+from src.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 class VertexAILlamaError(Exception):
     """Custom exception for errors related to Vertex AI Llama interactions."""
     pass
+
 
 def get_credentials(refresh: bool = False):
     """
@@ -23,14 +27,18 @@ def get_credentials(refresh: bool = False):
         VertexAILlamaError: If credentials retrieval or refresh fails.
     """
     try:
+        logger.info("Retrieving Vertex AI credentials")
         credentials, _ = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
 
         if refresh:
+            logger.info("Refreshing Vertex AI credentials")
             credentials.refresh(Request())
 
         return credentials
     except GoogleAuthError as e:
+        logger.error(f"Failed to get Vertex AI credentials: {e}")
         raise VertexAILlamaError(f"Failed to get credentials: {e}")
+
 
 def get_token():
     """
@@ -43,9 +51,12 @@ def get_token():
         VertexAILlamaError: If token retrieval fails.
     """
     try:
+        logger.info("Retrieving Vertex AI access token")
         return get_credentials(refresh=True).token
     except VertexAILlamaError as e:
+        logger.error(f"Failed to get Vertex AI access token: {e}")
         raise VertexAILlamaError(f"Failed to get access token: {e}")
+
 
 def get_project_id():
     """
@@ -58,9 +69,12 @@ def get_project_id():
         VertexAILlamaError: If project ID retrieval fails.
     """
     try:
+        logger.info("Retrieving Google Cloud project ID")
         return get_credentials().project_id
     except VertexAILlamaError as e:
+        logger.error(f"Failed to get Google Cloud project ID: {e}")
         raise VertexAILlamaError(f"Failed to get project ID: {e}")
+
 
 def get_endpoint():
     """
@@ -73,10 +87,13 @@ def get_endpoint():
         VertexAILlamaError: If project ID retrieval fails.
     """
     try:
+        logger.info("Constructing Vertex AI Llama API endpoint")
         project_id = get_project_id()
         return f"https://us-central1-aiplatform.googleapis.com/v1/projects/{project_id}/locations/us-central1/endpoints/openapi/chat/completions"
     except VertexAILlamaError as e:
+        logger.error(f"Failed to construct API endpoint: {e}")
         raise VertexAILlamaError(f"Failed to construct API endpoint: {e}")
+
 
 def vertex_ai_llama_request(prompt: str) -> str:
     """
@@ -103,6 +120,7 @@ def vertex_ai_llama_request(prompt: str) -> str:
     }
 
     try:
+        logger.info("Sending request to Vertex AI Llama API")
         response = requests.post(
             get_endpoint(),
             headers=headers,
@@ -112,11 +130,15 @@ def vertex_ai_llama_request(prompt: str) -> str:
         response.raise_for_status()
         choices = response.json().get('choices', [])
         if not choices:
+            logger.error("No choices returned in the response.")
             raise VertexAILlamaError("No choices returned in the response.")
         return choices[-1].get('message', {}).get('content', '')
     except requests.exceptions.RequestException as e:
+        logger.error(f"HTTP request failed: {e}")
         raise VertexAILlamaError(f"HTTP request failed: {e}")
     except KeyError:
+        logger.error("Unexpected response format.")
         raise VertexAILlamaError("Unexpected response format.")
     except Exception as e:
+        logger.error(f"An error occurred while sending the request: {e}")
         raise VertexAILlamaError(f"An error occurred while sending the request: {e}")

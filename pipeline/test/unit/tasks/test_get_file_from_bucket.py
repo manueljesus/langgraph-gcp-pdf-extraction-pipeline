@@ -8,6 +8,12 @@ from src.tasks import get_file_from_bucket, GoogleStorageError
 
 class TestGetFileFromBucket:
     @pytest.fixture
+    def mock_logger(self) -> Generator[MagicMock, None, None]:
+        """Fixture to patch the logger."""
+        with patch("src.tasks.get_file_from_bucket.logger") as mock_logger:
+            yield mock_logger
+
+    @pytest.fixture
     def mock_settings(self) -> Generator[MagicMock, None, None]:
         """Fixture to mock settings."""
         with patch("src.tasks.get_file_from_bucket.Settings") as mock_settings:
@@ -47,7 +53,8 @@ class TestGetFileFromBucket:
         mock_settings: MagicMock,
         mock_storage_client: MagicMock,
         mock_bucket: MagicMock,
-        mock_blob: MagicMock
+        mock_blob: MagicMock,
+        mock_logger: MagicMock
     ):
         """
         Test successful retrieval of a file from the bucket.
@@ -63,13 +70,15 @@ class TestGetFileFromBucket:
         mock_storage_client.bucket.assert_called_once_with(mock_settings.return_value.google_storage_bucket_name)
         mock_bucket.blob.assert_called_once_with(file_name)
         mock_blob.download_as_bytes.assert_called_once()
+        mock_logger.info.assert_called_once_with(f"Downloading file '{file_name}' from Google Cloud Storage")
 
     def test_get_file_from_bucket_error(
         self,
         mock_settings: MagicMock,
         mock_storage_client: MagicMock,
         mock_bucket: MagicMock,
-        mock_blob: MagicMock
+        mock_blob: MagicMock,
+        mock_logger: MagicMock
     ):
         """
         Test the behavior when another error occurs during file retrieval.
@@ -84,3 +93,4 @@ class TestGetFileFromBucket:
         mock_storage_client.bucket.assert_called_once_with(mock_settings.return_value.google_storage_bucket_name)
         mock_bucket.blob.assert_called_once_with(file_name)
         mock_blob.download_as_bytes.assert_called_once()
+        mock_logger.info.assert_called_once_with(f"Downloading file '{file_name}' from Google Cloud Storage")

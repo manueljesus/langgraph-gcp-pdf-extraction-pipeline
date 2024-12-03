@@ -2,6 +2,10 @@ from typing import Dict, Union, List
 import json
 
 from src.utils.vertex_ai_llama_client import vertex_ai_llama_request
+from src.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 def extract_key_research_findings_and_methodology(text: str) -> Dict[str, Union[str, List[str]]]:
     """Extract key research findings and methodology from the given text."""
@@ -38,10 +42,11 @@ def extract_key_research_findings_and_methodology(text: str) -> Dict[str, Union[
     """
 
     try:
+        logger.info("Extracting key research findings and methodology")
         return json.loads(vertex_ai_llama_request(findings_prompt).strip('```json').strip('```'))
 
     except Exception as e:
-
+        logger.error(f"Error extracting key research findings and methodology: {e}")
         print(f"Error extracting key research findings and methodology: {e}")
         return {
             "methodology": None,

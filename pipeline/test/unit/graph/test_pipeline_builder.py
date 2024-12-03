@@ -35,7 +35,13 @@ class TestPipelineBuilder:
         """
         Fixture to instantiate the PipelineBuilder with mock dependencies.
         """
-        return PipelineBuilder(file='file.pdf')
+        return PipelineBuilder(file="file.pdf")
+
+    @pytest.fixture
+    def mock_logger(self) -> MagicMock:
+        """Fixture to patch the logger."""
+        with patch("src.graph.pipeline_builder.logger") as mock_logger:
+            yield mock_logger
 
     @patch("src.graph.get_file_node.get_file_from_bucket")
     @patch("src.graph.check_processed_paper_node.check_processed_paper")
@@ -44,6 +50,7 @@ class TestPipelineBuilder:
         mock_check_processed_paper: MagicMock,
         mock_get_file: MagicMock,
         pipeline_builder: PipelineBuilder,
+        mock_logger: MagicMock,
     ):
         """
         Test that the pipeline is constructed with the correct nodes and edges.
@@ -92,6 +99,10 @@ class TestPipelineBuilder:
         actual_edges = {(edge.source, edge.target) for edge in graph.edges}
         assert actual_edges == expected_edges
 
+        mock_logger.info.assert_any_call("Adding nodes to the pipeline")
+        mock_logger.info.assert_any_call("Adding edges to the pipeline")
+        mock_logger.info.assert_any_call("Compiling the pipeline")
+
     @patch("src.graph.get_file_node.get_file_from_bucket")
     @patch("src.graph.check_processed_paper_node.check_processed_paper")
     def test_pipeline_execution_end_path(
@@ -100,6 +111,7 @@ class TestPipelineBuilder:
         mock_get_file: MagicMock,
         mock_pipeline_state: PipelineState,
         pipeline_builder: PipelineBuilder,
+        mock_logger: MagicMock,
     ):
         """
         Test that the pipeline ends early when the paper is already processed.
@@ -114,6 +126,10 @@ class TestPipelineBuilder:
 
         # Assert that the pipeline terminates early
         assert result["state"]["processed"]
+
+        mock_logger.info.assert_any_call("Adding nodes to the pipeline")
+        mock_logger.info.assert_any_call("Adding edges to the pipeline")
+        mock_logger.info.assert_any_call("Compiling the pipeline")
 
     @patch("src.graph.get_file_node.get_file_from_bucket")
     @patch("src.graph.get_file_node.generate_file_hash")
@@ -141,6 +157,7 @@ class TestPipelineBuilder:
         paper_id: str,
         mock_pipeline_state: PipelineState,
         pipeline_builder: PipelineBuilder,
+        mock_logger: MagicMock,
     ):
         """
         Test that the pipeline executes all nodes as expected.
@@ -182,3 +199,6 @@ class TestPipelineBuilder:
         # Validate the final state
         assert result == expected_state
 
+        mock_logger.info.assert_any_call("Adding nodes to the pipeline")
+        mock_logger.info.assert_any_call("Adding edges to the pipeline")
+        mock_logger.info.assert_any_call("Compiling the pipeline")

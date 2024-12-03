@@ -10,6 +10,15 @@ class TestPDFUtils:
     """
     PDF Utils test suite
     """
+
+    @pytest.fixture
+    def mock_logger(self) -> Generator[MagicMock, None, None]:
+        """
+        Fixture to patch the logger and provide a mock logger instance.
+        """
+        with patch("src.utils.pdf_utils.logger") as mock_logger:
+            yield mock_logger
+
     @pytest.fixture
     def mock_pdf_with_pages(self) -> MagicMock:
         """Mocked pdfplumber PDF with pages."""
@@ -39,7 +48,8 @@ class TestPDFUtils:
     def test_extract_text_from_pdf(
         self,
         mock_pdf_with_pages: MagicMock,
-        mock_pdfplumber_open: MagicMock
+        mock_pdfplumber_open: Generator[Mock, None, None],
+        mock_logger: Generator[MagicMock, None, None]
     ):
         mock_pdfplumber_open.return_value.__enter__.return_value = mock_pdf_with_pages
 
@@ -47,11 +57,15 @@ class TestPDFUtils:
         result = extract_text_from_pdf(pdf_path)
 
         assert result == "Page 1 text.Page 2 text."
+        # Verify logging calls
+        mock_logger.info.assert_any_call("Extracting text from PDF")
+        mock_logger.info.assert_any_call("Text extracted from PDF")
 
     def test_extract_text_from_pdf_empty(
         self,
         mock_pdf_empty: MagicMock,
-        mock_pdfplumber_open: MagicMock
+        mock_pdfplumber_open: Generator[Mock, None, None],
+        mock_logger: Generator[MagicMock, None, None]
     ):
         mock_pdfplumber_open.return_value.__enter__.return_value = mock_pdf_empty
 
@@ -59,10 +73,14 @@ class TestPDFUtils:
         result = extract_text_from_pdf(pdf_path)
 
         assert result == ""
+        # Verify logging calls
+        mock_logger.info.assert_any_call("Extracting text from PDF")
+        mock_logger.info.assert_any_call("Text extracted from PDF")
 
     def test_extract_text_from_pdf_error(
         self,
-        mock_pdfplumber_open: MagicMock
+        mock_pdfplumber_open: Generator[Mock, None, None],
+        mock_logger: Generator[MagicMock, None, None]
     ):
         # Mocking pdfplumber to raise an exception
         mock_pdfplumber_open.side_effect = Exception("File not found")
@@ -72,10 +90,15 @@ class TestPDFUtils:
         with pytest.raises(PDFExtractionError, match="Failed to extract text from PDF: File not found"):
             extract_text_from_pdf(pdf_path)
 
+        # Verify logging calls
+        mock_logger.info.assert_any_call("Extracting text from PDF")
+        mock_logger.error.assert_any_call("Failed to extract text from PDF: File not found")
+
     def test_extract_text_from_pdf_bytesio(
         self,
         mock_pdf_with_pages: MagicMock,
-        mock_pdfplumber_open: MagicMock
+        mock_pdfplumber_open: Generator[Mock, None, None],
+        mock_logger: Generator[MagicMock, None, None]
     ):
         mock_pdfplumber_open.return_value.__enter__.return_value = mock_pdf_with_pages
 
@@ -85,3 +108,6 @@ class TestPDFUtils:
         result = extract_text_from_pdf(pdf_bytes)
 
         assert result == "Page 1 text.Page 2 text."
+        # Verify logging calls
+        mock_logger.info.assert_any_call("Extracting text from PDF")
+        mock_logger.info.assert_any_call("Text extracted from PDF")

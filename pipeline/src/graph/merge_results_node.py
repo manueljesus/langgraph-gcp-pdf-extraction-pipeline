@@ -1,6 +1,9 @@
 from typing import Any
 from functools import reduce
 from src.graph import PipelineState, GraphError
+from src.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 class MergeResults:
@@ -15,6 +18,7 @@ class MergeResults:
     """
     def __call__(self, state: PipelineState) -> Any:
         try:
+            logger.info(f"Merging results for paper ID {state.get('state', {}).get('paper_id', None)}")
             merged_result = reduce(
                 lambda a, b: {**a, **b},
                 (
@@ -28,4 +32,5 @@ class MergeResults:
             return {"state": {**merged_result}}
 
         except Exception as e:
+            logger.error(f"Failed to merge results.")
             raise GraphError(e)

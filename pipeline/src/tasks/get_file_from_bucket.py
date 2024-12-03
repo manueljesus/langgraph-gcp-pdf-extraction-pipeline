@@ -2,6 +2,10 @@ from io import BytesIO
 from google.cloud import storage
 from src.config import Settings
 from src.tasks import GoogleStorageError
+from src.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 def get_file_from_bucket(file_name: str) -> BytesIO:
     """
@@ -18,6 +22,7 @@ def get_file_from_bucket(file_name: str) -> BytesIO:
         >>> print(file_content.read().decode('utf-8'))
     """
     try:
+        logger.info(f"Downloading file '{file_name}' from Google Cloud Storage")
         # Initialize the Google Cloud Storage client
         storage_client = storage.Client()
 
@@ -33,4 +38,5 @@ def get_file_from_bucket(file_name: str) -> BytesIO:
         return BytesIO(file_data)
 
     except Exception as e:
+        logger.error(f"Failed to download file from Google Cloud Storage: {e}")
         raise GoogleStorageError(f"Failed to download file from Google Cloud Storage: {e}")

@@ -7,6 +7,12 @@ from src.tasks import insert_data_into_bigquery, BigQueryError
 
 class TestInsertDataIntoBigQuery:
     @pytest.fixture
+    def mock_logger(self) -> Generator[MagicMock, None, None]:
+        """Fixture to patch the logger."""
+        with patch("src.tasks.insert_data_into_bigquery.logger") as mock_logger:
+            yield mock_logger
+
+    @pytest.fixture
     def mock_client(self) -> Generator[MagicMock, None, None]:
         """Fixture to create a mock BigQuery client."""
         with patch("src.tasks.insert_data_into_bigquery.Client") as mock_client_cls:
@@ -36,7 +42,8 @@ class TestInsertDataIntoBigQuery:
         mock_generate_hash: MagicMock,
         mock_settings: MagicMock,
         mock_client: MagicMock,
-        sample_data: Dict[str, str]
+        sample_data: Dict[str, str],
+        mock_logger: MagicMock
     ):
         """Test successful data insertion into BigQuery."""
         mock_settings.return_value.bigquery_dataset_id = "test_dataset"
@@ -107,12 +114,21 @@ class TestInsertDataIntoBigQuery:
             ],
         )
 
+        # Validate logger calls
+        mock_logger.info.assert_any_call(f"Inserting data into BigQuery tables for paper ID: {paper_id}")
+        mock_logger.info.assert_any_call(f"Inserting research paper data into BigQuery table for paper ID: {paper_id}")
+        mock_logger.info.assert_any_call(f"Inserting authors data into BigQuery table for paper ID: {paper_id}")
+        mock_logger.info.assert_any_call(f"Inserting keywords data into BigQuery table for paper ID: {paper_id}")
+        mock_logger.info.assert_any_call(f"Inserting key research findings data into BigQuery table for paper ID: {paper_id}")
+        mock_logger.info.assert_any_call(f"Data insertion complete for paper ID: {paper_id}")
+
     @patch("src.tasks.insert_data_into_bigquery.Settings")
     def test_insert_data_failure(
         self,
         mock_settings: MagicMock,
         mock_client: MagicMock,
-        sample_data: Dict[str, str]
+        sample_data: Dict[str, str],
+        mock_logger: MagicMock
     ):
         """Test BigQueryError is raised on insertion failure."""
         # Mock settings
@@ -123,3 +139,5 @@ class TestInsertDataIntoBigQuery:
 
         with pytest.raises(BigQueryError, match="Failed to insert research paper data"):
             insert_data_into_bigquery("test_paper_id", sample_data)
+        mock_logger.error.assert_called_with("Failed to insert research paper data: Mocked insertion error")
+
