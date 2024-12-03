@@ -22,19 +22,20 @@ def get_credentials(refresh: bool = False):
 
     Returns:
         google.auth.credentials.Credentials: The authenticated credentials.
+        str: The Google Cloud project ID.
 
     Raises:
         VertexAILlamaError: If credentials retrieval or refresh fails.
     """
     try:
         logger.info("Retrieving Vertex AI credentials")
-        credentials, _ = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+        credentials, project_id = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
 
         if refresh:
             logger.info("Refreshing Vertex AI credentials")
             credentials.refresh(Request())
 
-        return credentials
+        return credentials, project_id
     except GoogleAuthError as e:
         logger.error(f"Failed to get Vertex AI credentials: {e}")
         raise VertexAILlamaError(f"Failed to get credentials: {e}")
@@ -52,7 +53,8 @@ def get_token():
     """
     try:
         logger.info("Retrieving Vertex AI access token")
-        return get_credentials(refresh=True).token
+        credentials, _ = get_credentials(refresh=True)
+        return credentials.token
     except VertexAILlamaError as e:
         logger.error(f"Failed to get Vertex AI access token: {e}")
         raise VertexAILlamaError(f"Failed to get access token: {e}")
@@ -70,7 +72,8 @@ def get_project_id():
     """
     try:
         logger.info("Retrieving Google Cloud project ID")
-        return get_credentials().project_id
+        _, project_id = get_credentials()
+        return project_id
     except VertexAILlamaError as e:
         logger.error(f"Failed to get Google Cloud project ID: {e}")
         raise VertexAILlamaError(f"Failed to get project ID: {e}")

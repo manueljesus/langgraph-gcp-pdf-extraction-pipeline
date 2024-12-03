@@ -29,8 +29,12 @@ class TestVertexAILlama:
         """Fixture for mocked Google Cloud credentials."""
         credentials = MagicMock()
         credentials.token = "test_token"
-        credentials.project_id = "test_project_id"
         return credentials
+
+    @pytest.fixture
+    def mock_project_id(self) -> str:
+        """Fixture for mocked Google Cloud project ID."""
+        return "test_project_id"
 
     @pytest.fixture
     def settings(self) -> MagicMock:
@@ -42,21 +46,23 @@ class TestVertexAILlama:
     @pytest.fixture
     def patch_google_auth_default(
         self,
-        mock_credentials: MagicMock
+        mock_credentials: MagicMock,
+        mock_project_id: str
     ) -> Generator[MagicMock, None, None]:
-        """Patch google.auth.default to return mock credentials."""
-        with patch("google.auth.default") as mock_default:
-            mock_default.return_value = (mock_credentials, None)
+        """Patch src.utils.vertex_ai_llama_client.default to return mock credentials."""
+        with patch("src.utils.vertex_ai_llama_client.default") as mock_default:
+            mock_default.return_value = (mock_credentials, mock_project_id)
             yield mock_default
 
     @pytest.fixture
     def patch_get_credentials(
         self,
-        mock_credentials: MagicMock
+        mock_credentials: MagicMock,
+        mock_project_id: str
     ) -> Generator[MagicMock, None, None]:
         """Patch get_credentials to return mock credentials."""
         with patch("src.utils.vertex_ai_llama_client.get_credentials") as mock_get_credentials:
-            mock_get_credentials.return_value = mock_credentials
+            mock_get_credentials.return_value = (mock_credentials, mock_project_id)
             yield mock_get_credentials
 
     @pytest.fixture
@@ -77,19 +83,19 @@ class TestVertexAILlama:
 
     def test_get_credentials_success(
         self,
+        patch_google_auth_default: MagicMock,
         mock_logger: MagicMock,
-        mock_credentials: MagicMock
+        mock_credentials: MagicMock,
+        mock_project_id: str
     ):
         """Test get_credentials function with successful retrieval."""
-        with patch("src.utils.vertex_ai_llama_client.default", return_value=(mock_credentials, None)) as mock_default:
-            credentials = get_credentials()
-            assert credentials == mock_credentials
-            mock_default.assert_called_once_with(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-            mock_logger.info.assert_called_with("Retrieving Vertex AI credentials")
+        credentials = get_credentials()
+        assert credentials == (mock_credentials, mock_project_id)
+        patch_google_auth_default.assert_called_once_with(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+        mock_logger.info.assert_called_with("Retrieving Vertex AI credentials")
 
     def test_get_credentials_refresh_fail(
         self,
-        patch_google_auth_default: MagicMock,
         mock_credentials: MagicMock,
         mock_logger: MagicMock
     ):
