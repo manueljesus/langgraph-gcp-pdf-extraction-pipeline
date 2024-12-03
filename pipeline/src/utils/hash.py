@@ -1,6 +1,10 @@
 import hashlib
 from io import BytesIO
 from typing import Union
+from src.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 class HashError(Exception):
     """Custom exception for hashing errors."""
@@ -22,6 +26,8 @@ def generate_file_hash(file: Union[str, BytesIO]) -> str:
     """
     hash_func = hashlib.sha256()
 
+    logger.info(f"Generating hash for file: {file}")
+
     if isinstance(file, str):
         with open(file, 'rb') as f:
             for chunk in iter(lambda: f.read(4096), b""):
@@ -31,7 +37,11 @@ def generate_file_hash(file: Union[str, BytesIO]) -> str:
         for chunk in iter(lambda: file.read(4096), b""):
             hash_func.update(chunk)
 
-    return hash_func.hexdigest()
+    hash = hash_func.hexdigest()
+
+    logger.info(f"Hash generated: {hash}")
+
+    return hash
 
 
 def generate_unique_hash(string: str) -> str:
@@ -47,7 +57,13 @@ def generate_unique_hash(string: str) -> str:
     Raises:
         HashError: If the input string is empty or None.
     """
+    logger.info(f"Generating hash for string: {string}")
+
     if not string or not string.strip():
+        logger.error("Input string must not be empty or only whitespace.")
         raise HashError("Input string must not be empty or only whitespace.")
 
-    return hashlib.sha256(string.strip().encode("utf-8")).hexdigest()
+    hash = hashlib.sha256(string.strip().encode("utf-8")).hexdigest()
+
+    logger.info(f"Hash generated: {hash}")
+    return hash
