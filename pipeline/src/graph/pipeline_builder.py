@@ -17,6 +17,10 @@ from src.graph import (
     InsertDataIntoBigQuery
 )
 
+from src.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 class PipelineBuilder:
     """
@@ -33,6 +37,7 @@ class PipelineBuilder:
         """
         Add all nodes to the pipeline.
         """
+        logger.info("Adding nodes to the pipeline")
         self.pipeline.add_node("Get File", GetFile(self.file))
         self.pipeline.add_node("Check Processed Paper", CheckProcessedPaper())
         self.pipeline.add_node("Load PDF", LoadPDF())
@@ -49,6 +54,7 @@ class PipelineBuilder:
         """
         Add all edges to define the pipeline flow.
         """
+        logger.info("Adding edges to the pipeline")
         self.pipeline.add_edge(START, "Get File")
         self.pipeline.add_edge("Get File", "Check Processed Paper")
         self.pipeline.add_conditional_edges(
@@ -80,6 +86,7 @@ class PipelineBuilder:
         """
         Build and compile the pipeline.
         """
+        logger.info("Compiling the pipeline")
         self.add_nodes()
         self.add_edges()
         self.pipeline = self.pipeline.compile()
