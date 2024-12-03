@@ -2,6 +2,10 @@ from typing import Dict, Union, List
 import json
 
 from src.utils.vertex_ai_llama_client import vertex_ai_llama_request
+from src.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 def extract_metadata(text: str) -> Dict[str, Union[str, List[str]]]:
     """Extract metadata such as title, authors, publication date, and abstract."""
@@ -45,11 +49,11 @@ def extract_metadata(text: str) -> Dict[str, Union[str, List[str]]]:
     \"\"\"
     """
     try:
+        logger.info("Extracting metadata")
         return json.loads(vertex_ai_llama_request(metadata_prompt).strip('```json').strip('```'))
 
     except Exception as e:
-
-        print(f"Error extracting metadata: {e}")
+        logger.error(f"Error extracting metadata: {e}")
         return {
             "title": None,
             "authors": None,
