@@ -1,0 +1,8 @@
+# GCP Project ID
+project_id = ""
+
+# Region for resources
+region = "us-central1"
+
+# Base name for the GCS bucket (project_id will be added as suffix to ensure the required worldwide-uniqueness)
+bucket_name = ""
