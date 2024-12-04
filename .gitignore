@@ -172,3 +172,12 @@ pyrightconfig.json
 
 # JSON files (used for GCP credentials)
 *.json
+
+# Terraform
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
+terraform.tfvars
+*.out
+*.zip
+*.hcl
