@@ -13,3 +13,8 @@ variable "bucket_name" {
   description = "Base name for the GCS bucket"
   type        = string
 }
+
+variable "bigquery_dataset" {
+  description = "The BigQuery dataset name"
+  type        = string
+}

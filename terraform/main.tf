@@ -4,3 +4,9 @@ module "storage" {
   project_id  = var.project_id
   region      = var.region
 }
+
+module "bigquery" {
+  source          = "./modules/bigquery"
+  project_id      = var.project_id
+  bigquery_dataset = var.bigquery_dataset
+}
