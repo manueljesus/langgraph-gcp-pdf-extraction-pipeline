@@ -18,3 +18,9 @@ variable "bigquery_dataset" {
   description = "The BigQuery dataset name"
   type        = string
 }
+
+variable "function_name" {
+  description = "The name of the cloud function"
+  type        = string
+}
+

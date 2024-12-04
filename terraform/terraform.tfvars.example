@@ -9,3 +9,6 @@ bucket_name = ""
 
 # Name for the BigQuery dataset
 bigquery_dataset = ""
+
+# Name for the cloud function
+function_name = ""
