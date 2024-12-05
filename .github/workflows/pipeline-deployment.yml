@@ -30,7 +30,7 @@ jobs:
       - name: Deploy to Google Cloud Functions
         uses: google-github-actions/deploy-cloud-functions@v3
         with:
-          name: llm-based-pdf-extraction-pipeline
+          name: ${{ vars.GOOGLE_CLOUD_FUNCTION_NAME }}
           runtime: python312
           entry_point: pipeline
           source_dir: ./pipeline
