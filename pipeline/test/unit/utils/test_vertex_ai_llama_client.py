@@ -100,15 +100,17 @@ class TestVertexAILlama:
         mock_logger: MagicMock
     ):
         """Test get_credentials function with a refresh failure."""
-        mock_credentials.refresh.side_effect = GoogleAuthError("Refresh failed")
-        with pytest.raises(VertexAILlamaError, match="Failed to get credentials"):
-            get_credentials(refresh=True)
+        with patch("src.utils.vertex_ai_llama_client.default") as mock_default:
+            mock_default.return_value = (mock_credentials, "test_project_id")
+            mock_credentials.refresh.side_effect = GoogleAuthError("Refresh failed")
+            with pytest.raises(VertexAILlamaError, match="Failed to get credentials"):
+                get_credentials(refresh=True)
         # Verify log calls
-        mock_logger.info.assert_called_once_with("Retrieving Vertex AI credentials")
+        mock_logger.info.assert_called_with(
+            "Refreshing Vertex AI credentials",
+        )
         mock_logger.error.assert_called_with(
-            "Failed to get Vertex AI credentials: Your default credentials were not found. "
-            "To set up Application Default Credentials, see "
-            "https://cloud.google.com/docs/authentication/external/set-up-adc for more information."
+            "Failed to get Vertex AI credentials: Refresh failed"
         )
 
     def test_get_token_success(
