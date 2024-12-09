@@ -41,7 +41,7 @@ The processing pipeline uses a **LangGraph StateGraph** to orchestrate tasks, en
 5. **Merge Results:** Combine extracted data into a unified format.
 6. **Insert Data Into BigQuery:** Save structured data into pre-configured BigQuery tables.
 
-![Pipeline Diagram](https://private-user-images.githubusercontent.com/30578536/391584708-bce449e6-49f6-4bfc-a53c-9bde7bc21409.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzM0MTczNjUsIm5iZiI6MTczMzQxNzA2NSwicGF0aCI6Ii8zMDU3ODUzNi8zOTE1ODQ3MDgtYmNlNDQ5ZTYtNDlmNi00YmZjLWE1M2MtOWJkZTdiYzIxNDA5LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDEyMDUlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQxMjA1VDE2NDQyNVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ4ZWFkMDQ3MmRjMDgxNzkzZWVhZGEwOWFiNTBmMmY3MGY0ZGI1MzRhZDVjNGEyNjIyMWNmNDhmOGFiMDNmNjQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.4SacTDGX3QihDw-zDZ7ghIiiTPE2sVjclkyz7DsAb6s)
+![Pipeline Diagram](https://github.com/user-attachments/assets/915ec689-d872-4f10-bf43-4694f7cf7c1b)
 
 ## Infrastructure
 
